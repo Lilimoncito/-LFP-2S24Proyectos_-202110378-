@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "compiler",
+            "type": "shell",
+            "command": "gfortran",
+            "args": [
+                "-g",
+                "-Wall",
+                "-o",
+                "Main.exe",
+                "Main.f90",
+                
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/Fortran"
+            }
+        }
+    ]
+}

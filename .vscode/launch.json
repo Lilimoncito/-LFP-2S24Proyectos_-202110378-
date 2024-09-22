@@ -1,0 +1,26 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [{
+        "name": "RUN GBD",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/Fortran/Main.exe",
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}/Fortran",
+        "preLaunchTask": "compiler",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "gdb",
+        
+    },
+    {
+        "name" : "Intel Debug Attach",
+        "type" : "cppvsdbg",
+        "request" : "attach",
+        "processId" : "${command:pickProcess}"
+    }]
+}
