@@ -8,6 +8,7 @@ module grafica_module
         contains
 
         procedure generar_dot
+        procedure pais_menos_saturado
     end type grafica
 
     contains
@@ -69,6 +70,42 @@ module grafica_module
     write(unidad, '(A)') '}'
     close(unidad)
     end subroutine
+
+    subroutine pais_menos_saturado(self, archivo_salida)
+    class(grafica), intent(in) :: self
+    character(len=*), intent(in) :: archivo_salida
+    integer :: i, j
+    integer :: saturacion_min
+    type(pais) :: pais_menos_saturado_data
+    integer :: unidad_salida
+
+    ! Inicializar la saturación mínima con un valor grande
+    saturacion_min = 101
+    pais_menos_saturado_data%nombre = 'N/A'
+    pais_menos_saturado_data%bandera = 'N/A'
+
+    ! Buscar el país con menor saturación
+    do i = 1, self%num_continentes
+        do j = 1, self%continentes(i)%num_paises
+            if (self%continentes(i)%paises(j)%saturacion < saturacion_min) then
+                saturacion_min = self%continentes(i)%paises(j)%saturacion
+                pais_menos_saturado_data = self%continentes(i)%paises(j)
+            end if
+        end do
+    end do
+
+    ! Abrir el archivo de salida para escribir los datos
+    unidad_salida = 11
+    open(unit=unidad_salida, file=archivo_salida, status='replace')
+
+    ! Escribir los datos del país menos saturado en el archivo
+    write(unidad_salida, '(A, A)') 'Nombre del pais: ', trim(pais_menos_saturado_data%nombre)
+    write(unidad_salida, '(A, I0)') 'Saturacion: ', saturacion_min   ! Corregimos el formato para saturación
+    write(unidad_salida, '(A, A)') 'Bandera: ', trim(pais_menos_saturado_data%bandera)
+    print*, 'si se agrego el pais menos saturado'
+    ! Cerrar el archivo
+    close(unidad_salida)
+end subroutine
 end module
 
 module Pais_module
@@ -567,7 +604,7 @@ program proyecto_1
     call lexer%analizar(trim(entrada))
     if(.not. lexer%existe_error_lexico) then
         call lexer%grafica%generar_dot('grafica.dot')
-
+        call lexer%grafica%pais_menos_saturado('datos_saturacion.txt')
         
     end if
     call lexer%generar_html('tokens.html')

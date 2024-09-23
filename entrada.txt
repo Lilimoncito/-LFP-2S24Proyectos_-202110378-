@@ -1,4 +1,4 @@
-grafia:{
+grafica:{
 	nombre:"Corto #1";
 	continente:{
 	nombre: "America del Norte";

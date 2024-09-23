@@ -1,0 +1,42 @@
+# Manual de Usuario de la Aplicación Analizador_Lexico
+
+## 1. Página Principal
+
+Al ejecutar el programa, se mostrará una pequeña ventana que contiene en su parte superior una barra con tres opciones: **Menú**, **Acerca de** y **Salir**. También hay un campo en blanco donde se puede ingresar texto tecleado o pegar texto copiado para ser analizado. Finalmente, hay un botón de **Analizar**, que llamará a la lógica para tokenizar el texto ingresado.
+
+
+## 2. Menú
+
+Al hacer clic en la opción **Menú**, se desplegará un cuadro con múltiples opciones, que brindan diferentes comandos al usuario, como **Abrir archivo**, **Guardar** y **Guardar como**.
+
+### 3. Abrir Archivo
+
+Al seleccionar esta opción, se mostrará una ventana del explorador del equipo del usuario, donde podrá escoger un archivo con la extensión especificada. Una vez elegido, el contenido del archivo se pegará en el cuadro de texto de la ventana principal.
+
+### 4. Guardar
+
+Al elegir esta opción, si el archivo que desea guardar ya existe, se guardará automáticamente. Si no, se desplegará la ventana del explorador de Windows para que el usuario seleccione la ruta donde desea guardar su archivo.
+
+### 5. Guardar Como
+
+Al seleccionar esta opción, se abrirá el explorador de Windows en una ventana, permitiendo al usuario elegir la ruta donde desea guardar el archivo.
+
+## 6. Acerca de
+
+Al hacer clic en esta opción, se desplegará una ventana con los datos del estudiante y el curso correspondiente. Esta ventana incluye un botón para cerrarla, regresando al usuario a la ventana principal.
+
+## 7. Salir
+
+Esta opción, como su nombre indica, sirve para cerrar el programa una vez que el usuario ha finalizado su uso.
+
+## 8. Cuadro de Texto y Botón Analizar
+
+En esta área, se desplegará el texto ingresado al programa. Una vez finalizado el ingreso del texto, se debe presionar el botón **Analizar** para ejecutar el analizador.
+
+## 9. Archivo HTML
+
+Una vez presionado el botón **Analizar**, se abrirá un archivo HTML en el navegador, mostrando la lista de tokens encontrados durante el análisis.
+
+## 10. Gráficas
+
+Al ejecutar el analizador, se generarán dos gráficas en la ventana principal. Una de ellas mostrará una representación en forma de árbol de la gráfica ingresada, con el nombre de la gráfica como nodo principal, apuntando a los continentes y, a su vez, estos a los países. Los países tendrán un color respectivo dependiendo de su saturación. Además, se mostrará una imagen del país con menor saturación entre los ingresados.

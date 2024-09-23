@@ -1,0 +1,3 @@
+Nombre del pais: Mexico
+Saturacion: 35
+Bandera: C:\banderas\mx.png

@@ -1,0 +1,314 @@
+# Manual Técnico del Código Fortran
+
+## Índice
+1. [Introducción](#introducción)
+2. [Estructura del Código](#estructura-del-código)
+3. [Módulos](#módulos)
+   - [grafica_module](#grafica_module)
+   - [Pais_module](#pais_module)
+   - [Continente_module](#continente_module)
+   - [Token_module](#token_module)
+   - [Analizador_Lexico_module](#analizador_lexico_module)
+4. [Subrutinas](#subrutinas)
+5. [Ejemplo de Uso](#ejemplo-de-uso)
+6. [Conclusión](#conclusión)
+
+## Introducción
+Este código está diseñado para gestionar información sobre continentes y países, permitiendo generar gráficos en formato DOT y realizar análisis léxicos de textos que describen gráficas, continentes y países.
+
+## Estructura del Código
+El código se organiza en varios módulos, cada uno con su propia funcionalidad. Los módulos incluyen definiciones de tipos de datos, subrutinas para el análisis léxico y la generación de gráficos.
+
+## Módulos
+
+### grafica_module
+Este módulo define el tipo `grafica`, que incluye:
+- **Atributos**:
+  - `nombre`: Nombre de la gráfica.
+  - `num_continentes`: Número de continentes en la gráfica.
+  - `continentes`: Lista de continentes asociados a la gráfica.
+
+- **Procedimientos**:
+  - `generar_dot`: Genera un archivo DOT que representa la gráfica.
+  - `pais_menos_saturado`: Busca y escribe en un archivo el país con menor saturación.
+```fortran
+! Código de ejemplo para el módulo grafica
+module grafica_module
+    type :: grafica
+        character(len=100) :: nombre
+        integer :: num_continentes
+        character(len=100), allocatable :: continentes(:)
+    contains
+        procedure :: generar_dot
+        procedure :: pais_menos_saturado
+    end type grafica
+end module grafica_module
+```
+### Pais_module
+Define el tipo `pais`, que incluye:
+- **Atributos**:
+  - `nombre`: Nombre del país.
+  - `poblacion`: Población del país.
+  - `saturacion`: Nivel de saturación del país.
+  - `bandera`: URL o ruta de la bandera del país.
+  - Indicadores booleanos para cada atributo.
+```fortran
+module Pais_module
+    implicit none
+
+    type :: pais
+        character(len=50) :: nombre
+        integer :: poblacion
+        integer :: saturacion
+        character(len=100) :: bandera
+        logical :: tiene_nombre
+        logical :: tiene_poblacion
+        logical :: tiene_saturacion
+        logical :: tiene_bandera
+    end type pais
+
+contains
+
+end module 
+```
+### Continente_module
+Define el tipo `continente`, que incluye:
+- **Atributos**:
+  - `nombre`: Nombre del continente.
+  - `paises`: Lista de países dentro del continente.
+  - `num_paises`: Número de países en el continente.
+  - Indicador booleano para el nombre del continente.
+
+module Continente_module
+    use Pais_module
+    implicit none
+```fortran    
+    type :: continente
+        character(len = 50) :: nombre
+        type(pais), dimension(:), allocatable :: paises !lista de paises que contiene el modulo continentes
+        integer :: num_paises
+        logical :: tiene_nombre
+    
+    end type continente
+```     
+    
+end module 
+### Token_module
+Define el tipo `token`, que representa los elementos léxicos del texto analizado:
+- **Atributos**:
+  - `tipo`: Tipo de token (identificador, número, etc.).
+  - `valor`: Valor del token.
+```fortran  
+module Token_module
+    implicit none
+
+    type :: token
+        character(len=50) :: tipo
+        character(len=50) :: valor
+    end type token
+```
+end module Token_module
+### Analizador_Lexico_module
+Este módulo define el tipo `analizador_lexico`, que incluye:
+- **Atributos**:
+  - `tokens`: Lista de tokens generados.
+  - `errores_list`: Lista de errores léxicos.
+  - `grafica`: Objeto de tipo `grafica`.
+  - Indicadores booleanos para controlar el estado del análisis léxico.
+
+- **Procedimientos**:
+  - `analizar`: Analiza un texto de entrada.
+  - `tokenizar_texto`: Tokeniza el texto de entrada.
+  - Subrutinas para leer identificadores, números, cadenas y símbolos.
+```fortran
+module Analizador_Lexico_module
+    use Token_module
+    use grafica_module
+    use Continente_module
+    implicit none
+
+    type :: analizador_lexico
+        type(token), allocatable :: tokens (:) !lista de tokens
+        type(token), allocatable :: errores_list(:) !lista de errores
+        type(grafica):: grafica
+        integer :: num_tokens
+        integer :: num_errores
+        character(len=:), allocatable :: texto
+        integer :: posicion_actual
+        integer :: longitud
+        logical :: en_grafica
+        logical :: grafica_tiene_nombre
+        logical :: en_continente
+        logical :: en_pais
+        logical :: existe_error_lexico
+    
+
+    contains
+
+    procedure :: analizar
+    procedure :: tokenizar_texto
+    procedure :: leer_identificadores
+    procedure :: leer_numeros
+    procedure :: leer_cadena
+    procedure :: leer_simbolos
+    procedure :: generar_html
+    procedure :: generar_html_errores
+    end type analizador_lexico
+    
+contains
+```
+## Subrutinas
+Cada módulo puede contener varias subrutinas que realizan tareas específicas:
+
+- `generar_dot`: Escribe un archivo DOT con la estructura de la gráfica.
+- `pais_menos_saturado`: Identifica y guarda el país con menor saturación en un archivo de salida.
+- `tokenizar_texto`: Descompone el texto de entrada en tokens.
+- Subrutinas para leer identificadores, números y cadenas.
+```fortran
+subroutine generar_dot(self, archivo_dot)
+        class(grafica), intent(in) :: self
+        character(len=*), intent(in) :: archivo_dot
+        integer :: i,j
+        character(len = 100) :: linea
+        character(len = 10) :: color_nodo
+        integer :: unidad
+        
+        !abrir el archivo para la escritura
+        unidad = 10
+        open(unit = unidad, file = archivo_dot, status = 'replace')
+
+        !escribir el encabezado del archivo dot
+        ! Escribir el encabezado del archivo dot
+    write(unidad, '(A)') 'digraph "', trim(self%nombre), '" {'
+    
+
+    ! Conectar el nombre de la gráfica con los continentes
+    do i = 1, self%num_continentes
+        ! Escribir la conexión del nombre de la gráfica con el continente
+        write(unidad, '(A)') '   "', trim(self%nombre), '" -> "', &
+            trim(self%continentes(i)%nombre), '" [shape="box"];'
+
+        ! Recorrer los países del continente
+        do j = 1, self%continentes(i)%num_paises
+            ! Determinar el color basado en la saturación
+            select case(self%continentes(i)%paises(j)%saturacion)
+                case(0:15)
+                    color_nodo = 'white'
+                case(16:30)
+                    color_nodo = 'blue'
+                case(31:45)
+                    color_nodo = 'green'
+                case(46:60)
+                    color_nodo = 'yellow'
+                case(61:75)
+                    color_nodo = 'orange'
+                case(76:100)
+                    color_nodo = 'red'
+                case default
+                    color_nodo = 'gray'  ! En caso de error o valores fuera de rango
+            end select
+
+            ! Escribir el nodo del país con su color correspondiente
+            write(unidad, '(A)') '   "', trim(self%continentes(i)%paises(j)%nombre), &
+                '" [style=filled, fillcolor=', color_nodo, '];'
+
+            ! Escribir la conexión entre el continente y el país
+            write(unidad, '(A)') '   "', trim(self%continentes(i)%nombre), '" -> "', &
+                trim(self%continentes(i)%paises(j)%nombre), '";'
+        end do
+    end do
+
+    ! Cerrar el archivo dot
+    write(unidad, '(A)') '}'
+    close(unidad)
+    end subroutine
+```
+## Ejemplo de Uso
+Para utilizar este código, primero se debe instanciar un objeto del tipo `analizador_lexico` y llamar a la subrutina `analizar` con el texto de entrada deseado. A partir de ahí, se pueden generar gráficos y realizar análisis sobre los datos.
+
+```fortran
+program main
+    use Analizador_Lexico_module
+    implicit none
+    type(analizador_lexico) :: analizador
+    character(len=100) :: texto_entrada
+
+    texto_entrada = 'grafica nombre "Mi Gráfica" continente "Asia" pais "China" poblacion 1400000000 saturacion 50 bandera "china.png"'
+    call analizar(analizador, texto_entrada)
+end program main
+```
+
+# Manual Técnico de la Aplicación Analizador_Lexico
+
+## Descripción General
+
+La aplicación **Analizador_Lexico** es una herramienta gráfica que permite analizar texto utilizando un analizador léxico escrito en Fortran. La interfaz se basa en `tkinter` y permite cargar archivos de texto, analizar su contenido, generar gráficos y mostrar información relacionada con los datos analizados.
+
+## Dependencias
+
+El código utiliza las siguientes bibliotecas:
+- `tkinter`: Para la creación de la interfaz gráfica.
+- `graphviz`: Para la generación de gráficos a partir de archivos DOT.
+- `subprocess`: Para ejecutar el analizador léxico en Fortran.
+- `webbrowser`: Para abrir archivos HTML en el navegador.
+
+## Estructura del Código
+
+### Clase `Analizador_App`
+
+#### Constructor (`init__`)
+
+- **Parámetros**:
+  - `root`: Ventana principal de la aplicación.
+  
+- **Componentes de la Interfaz**:
+  - Un marco para información (`frame_info`).
+  - Un cuadro de texto con desplazamiento (`cuadro_texto`) para ingresar texto.
+  - Un botón (`boton_analizar`) para iniciar el análisis.
+  - Una barra de menú que permite abrir y guardar archivos, y mostrar información sobre el estudiante.
+
+#### Métodos
+
+1. **`salir_aplicacion()`**
+   - Cierra la aplicación.
+
+2. **`abrir_ventana_texto()`**
+   - Muestra una ventana emergente con información del estudiante.
+
+3. **`analizar_texto()`**
+   - Obtiene el texto del cuadro de texto, lo guarda en un archivo `entrada.txt`, y ejecuta el analizador léxico de Fortran. 
+   - Maneja la salida del analizador y genera gráficos a partir de archivos DOT.
+
+4. **`abrir_archivo()`**
+   - Permite abrir un archivo `.org` y cargar su contenido en el cuadro de texto.
+
+5. **`guardar_archivo()`**
+   - Guarda el contenido del cuadro de texto en un archivo existente o llama a `guardar_como_archivo()` si no hay archivo abierto.
+
+6. **`guardar_como_archivo()`**
+   - Permite al usuario seleccionar una ubicación y un nombre para guardar el archivo.
+
+7. **`generar_grafica()`**
+   - Crea una gráfica a partir de un archivo DOT utilizando Graphviz.
+
+8. **`mostrar_imagen(ruta_imagen)`**
+   - Muestra una imagen en la interfaz, escalando su tamaño según sea necesario.
+
+9. **`leer_datos_pais()`**
+   - Lee los datos de un archivo de salida generado por el analizador y muestra información sobre el país con menor saturación.
+
+10. **`mostrar_info_pais(nombre, saturacion)`**
+    - Actualiza la etiqueta en la interfaz con la información del país analizado.
+
+11. **`mostrar_pais_menos_saturado_imagen(ruta_imagen)`**
+    - Muestra la imagen de la bandera del país con menor saturación.
+
+### Ejecución de la Aplicación
+
+El bloque final del código permite ejecutar la aplicación:
+
+```python
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = Analizador_App(root)
+    root.mainloop()
